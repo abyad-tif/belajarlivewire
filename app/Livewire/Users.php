@@ -3,16 +3,28 @@
 namespace App\Livewire;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
+use Livewire\Attributes\Validate;
+use Illuminate\Support\Facades\Hash;
 
 class Users extends Component
 {
+    #[Validate('required|min:3')]
     public $name = '';
+    #[Validate('required|email:dns|unique:users')]
     public $email = '';
+    #[Validate('required|min:3')]
     public $password = '';
 
     public function createUser() {
+        // $validated = $this->validate([
+        //     'name' => 'required|min:3',
+        //     'email' => 'required|email:dns|unique:users',
+        //     'password' => 'required:min:3'
+        // ]);
+
+        $this->validate();
+
         User::create([
             'name' => $this->name,
             'email' => $this->email,
@@ -20,6 +32,8 @@ class Users extends Component
         ]); 
 
         $this->reset();
+
+        session()->flash('success', 'New User has been created successfully');
     }
 
     public function render()
